@@ -1,0 +1,31 @@
+<launch>
+
+    <arg name="project_name" default="racing" />
+
+    <!-- Add main node of project -->
+    <node pkg="racing" type="racing_node" name="racing" output="screen">
+        <param name="x_finish" value="-6.5" />
+        <param name="y_finish" value="6.5" />
+        <param name="z_finish" value="0" />
+    </node>
+
+    <!-- Add stage node to project -->
+    <node pkg="stage_ros" type="stageros" name="model" args="$(find stage_launch)/worlds/task1.world">
+    </node>
+    <param name="use_sim_time" value="true" />
+
+    <!-- Add RViz to project -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find racing)/config/navi.rviz"/>
+
+    <!-- Add gmapping to project -->
+    <arg name="scan" default="base_scan" />
+
+    <include file="$(find racing)/launch/gmapping_low.launch">
+        <arg name="scan" value="$(arg scan)" />
+    </include>
+
+    <include file="$(find racing)/config/move_base/move_base.xml">
+        <arg name="scan" value="$(arg scan)" />
+    </include>
+
+</launch>
